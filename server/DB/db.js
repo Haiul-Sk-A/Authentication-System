@@ -1,11 +1,13 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
-export function connectToDb() {
-    mongoose.connect(process.env.MONGO_URI)
-        .then(() => {
-            console.log('Connected to DB');
-        })
-        .catch((error) => {
-            console.log("Error connecting to DB:", error.message);
-        });
+function connectToDb () {
+    mongoose.connect(process.env.MONGO_URI, )
+    .then (() => {
+        console.log('connected to db');
+    })
+    .catch((error) =>{
+        console.log('error connecting to db',error.message);
+    })
 }
+
+module.exports = connectToDb;
