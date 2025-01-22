@@ -1,32 +1,42 @@
 const jwt = require('jsonwebtoken');
-const userModel = require('../model/userModels');  // Path to your user model
-const blackListTokenModel = require('../model/blacklistToken.model');  // Path to your blacklistToken model
+const userModel = require('../model/userModels'); // Path to your user model
+const blackListTokenModel = require('../model/blacklistToken.model'); // Path to your blacklistToken model
 
 // Middleware to check if the user is authenticated
 const authMiddleware = async (req, res, next) => {
-    const token = req.cookies.token || req.headers.authorization?.split(' ')[ 1 ];
-
-    if (!token) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
-
-    const isBlacklisted = await blackListTokenModel.findOne({ token: token });
-
-    if (isBlacklisted) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
-
     try {
+        // Retrieve the token from cookies or authorization header
+        const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
 
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized: Token is missing' });
+        }
+
+        // Check if the token is blacklisted
+        if (blackListTokenModel) {
+            const isBlacklisted = await blackListTokenModel.findOne({ token });
+            if (isBlacklisted) {
+                return res.status(401).json({ message: 'Unauthorized: Token is blacklisted' });
+            }
+        }
+
+        // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Fetch the user from the database
         const user = await userModel.findById(decoded._id);
 
-        req.user = user;
+        if (!user) {
+            return res.status(404).json({ message: 'Unauthorized: User not found' });
+        }
 
-        return next();
+        // Attach necessary user details to the request object
+        req.user = { userId: user._id, email: user.email };
 
+        next();
     } catch (err) {
-        return res.status(401).json({ message: 'Unauthorized' });
+        console.error('Authentication error:', err.message);
+        return res.status(401).json({ message: 'Unauthorized: Invalid or expired token' });
     }
 };
 

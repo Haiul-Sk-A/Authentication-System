@@ -2,8 +2,9 @@ const express = require("express");
 const cors = require("cors");
 require('dotenv/config');
 const cookieParser = require("cookie-parser");
-const connectToDb  = require("./DB/db.js");
+const connectToDb  = require("./config/db.js");
 const authRouter = require("./routes/authRoutes.js");
+const userRouter  = require("./routes/userRoutes.js");
 
 const app = express();
 
@@ -18,5 +19,6 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRouter);
+app.use('/api/user', userRouter);
 
 app.listen(port, () => console.log(`Server started on PORT:${port}`));
