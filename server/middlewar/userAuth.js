@@ -1,18 +1,17 @@
 const jwt = require('jsonwebtoken');
 
 const userAuth = async (req, res, next) => {
-    const { token } = req.cookies; // Ensure you have a middleware like `cookie-parser` for parsing cookies.
+    const { token } = req.cookies; 
 
     if (!token) {
         return res.status(401).json({ message: 'Unauthorized, Login again' });
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify the JWT
-
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); 
         if (decoded) {
-            req.body.userId = decoded._id; // Attach the decoded user ID to the request
-            next(); // Proceed to the next middleware or route handler
+            req.body.userId = decoded._id; 
+            next(); 
         } else {
             return res.status(401).json({ message: 'Unauthorized, Login again' });
         }

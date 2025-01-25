@@ -169,19 +169,20 @@ module.exports.verifyEmail = async (req, res) => {
 
 module.exports.isAuthenticat = async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1]; 
+        // Get token from cookie or authorization header
+        const token = req.cookies.token || (req.headers.authorization && req.headers.authorization.split(' ')[1]);
 
         if (!token) {
             return res.status(401).json({ success: false, message: 'Authentication token is missing' });
         }
 
         const decoded = jwt.verify(token, secretKey);
-
         return res.json({ success: true, user: decoded });
     } catch (error) {
         return res.status(401).json({ success: false, message: error.message });
     }
 };
+
 
 module.exports.sendRestOtp = async (req, res) => {
     const { email } = req.body;
