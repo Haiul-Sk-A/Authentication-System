@@ -1,13 +1,9 @@
-const userModel = require('../model/userModels');
+const userModel = require("../model/userModels");
 
 module.exports.getUserData = async (req, res) => {
     try {
-        const { userId } = req.body; // Extract userId from request body
-
-        if (!userId) {
-            return res.status(400).json({ success: false, message: 'User ID is required' });
-        }
-
+        const { userId } = req.user; 
+        
         const user = await userModel.findById(userId);
 
         if (!user) {
@@ -18,7 +14,7 @@ module.exports.getUserData = async (req, res) => {
             success: true,
             userData: {
                 name: user.name,
-                isAccountVerified: user.isAccountVerified, // Fixed typo: isAccountVerified
+                isAccountVerified: user.isAccountVerified,
             },
         });
     } catch (error) {

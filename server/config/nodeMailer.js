@@ -5,8 +5,8 @@ const transpoter = nodemailer.createTransport({
     port: 587,
     secure: false, 
     auth: {
-        user: process.env.SMTP_USER || "your-email@gmail.com", // Your email address
-        pass: process.env.SMTP_PASS || "your-app-password" // Your Google App Password
+        user: process.env.SMTP_USER || "your-email@gmail.com",
+        pass: process.env.SMTP_PASS || "your-app-password"
     }
 });
 

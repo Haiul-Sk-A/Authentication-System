@@ -13,17 +13,15 @@ const authMiddleware = async (req, res, next) => {
         }
 
         // Check if the token is blacklisted
-        if (blackListTokenModel) {
-            const isBlacklisted = await blackListTokenModel.findOne({ token });
-            if (isBlacklisted) {
-                return res.status(401).json({ message: 'Unauthorized: Token is blacklisted' });
-            }
+        const isBlacklisted = await blackListTokenModel.findOne({ token });
+        if (isBlacklisted) {
+            return res.status(401).json({ message: 'Unauthorized: Token is blacklisted' });
         }
 
         // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Fetch the user from the database
+        // Fetch the user from the database using async/await
         const user = await userModel.findById(decoded._id);
 
         if (!user) {
